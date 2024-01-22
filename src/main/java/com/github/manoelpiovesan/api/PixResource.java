@@ -4,10 +4,7 @@ import com.github.manoelpiovesan.entity.Pix;
 import com.github.manoelpiovesan.service.DictService;
 import com.github.manoelpiovesan.service.PixService;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -34,6 +31,18 @@ public class PixResource {
         }
 
         return null;
+    }
+
+
+    @GET
+    @Produces("image/png")
+    @Path("/{uuid}/qrcode")
+    public Response gerarQrCode(@PathParam("uuid") final String uuid) {
+        try {
+            return Response.ok(pixService.gerarQrCode(uuid)).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
 }
