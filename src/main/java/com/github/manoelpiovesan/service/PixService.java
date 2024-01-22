@@ -14,14 +14,14 @@ import java.util.UUID;
 @ApplicationScoped
 public class PixService {
 
-    public static final String QRCODE_PATH = "/tmp/qrcode";
+    public static final String TEMP_FOLDER_PATH = System.getProperty("java.io.tmpdir");
 
 
     public LinhaDigitavel gerarLinhaDigitavel(final Chave chave, BigDecimal valor, String cidadeRemetente) {
 
         var qrCode = new QrCode(new DadosEnvio(chave, valor, cidadeRemetente));
         var uuid = UUID.randomUUID().toString();
-        var imagePath = QRCODE_PATH + uuid + ".png";
+        var imagePath = TEMP_FOLDER_PATH + uuid + ".png";
         qrCode.save(Path.of(imagePath));
         // TODO IMPLEMENTAR CACHE
         String qrCodeString = qrCode.toString();
