@@ -35,7 +35,7 @@ public class PixResource {
 
     @GET
     @Produces("image/png")
-    @Path("/qrcode/{uuid}")
+    @Path("/{uuid}/qrcode")
     public Response gerarQrCode(@PathParam("uuid") final String uuid) {
         try {
             System.out.println(uuid);
@@ -45,5 +45,39 @@ public class PixResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
+
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{uuid}/aprovar")
+    @PATCH
+    public Response aprovarPix(@PathParam("uuid") String uuid) {
+
+        return Response.ok(pixService.aprovarTransacao(uuid).get()).build();
+    }
+
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{uuid}/reprovar")
+    @DELETE
+    public Response reprovarPix(@PathParam("uuid") String uuid) {
+
+        return Response.ok(pixService.reprovarTransacao(uuid).get()).build();
+    }
+
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{uuid}")
+    @GET
+
+    public Response buscarPix(@PathParam("uuid") String uuid) {
+
+        return Response.ok(pixService.findById(uuid)).build();
+    }
+
+
+
+
+
+
 
 }
