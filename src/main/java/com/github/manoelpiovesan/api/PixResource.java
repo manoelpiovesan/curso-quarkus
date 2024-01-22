@@ -36,11 +36,13 @@ public class PixResource {
 
     @GET
     @Produces("image/png")
-    @Path("/{uuid}/qrcode")
+    @Path("/qrcode/{uuid}")
     public Response gerarQrCode(@PathParam("uuid") final String uuid) {
         try {
+            System.out.println(uuid);
             return Response.ok(pixService.gerarQrCode(uuid)).build();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
