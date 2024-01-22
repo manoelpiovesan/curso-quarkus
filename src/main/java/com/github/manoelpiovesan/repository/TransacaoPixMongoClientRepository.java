@@ -43,8 +43,7 @@ public class TransacaoPixMongoClientRepository implements TransactionRepository{
                 ZoneId.of("America/Sao_Paulo")));
 
         var response = getCollection().insertOne(document);
-        System.out.println("Transação adicionada com sucesso");
-        System.out.println(response);
+
 
 
     }

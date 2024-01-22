@@ -5,8 +5,10 @@ import com.github.manoelpiovesan.entity.LinhaDigitavel;
 import com.github.manoelpiovesan.entity.Transaction;
 import com.github.manoelpiovesan.enums.StatusPix;
 import com.github.manoelpiovesan.repository.TransacaoPixMongoClientRepository;
+import com.github.manoelpiovesan.repository.TransactionPanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.TransactionScoped;
 import jakarta.transaction.Transactional;
 import org.bson.Document;
 
@@ -16,7 +18,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class TransactionDomain {
     @Inject
-    TransacaoPixMongoClientRepository repository;
+    TransactionPanacheRepository repository;
 
 
     @Transactional
@@ -46,8 +48,7 @@ public class TransactionDomain {
 
 
     public Optional<Transaction> findById(final String uuid) {
-        Optional<Document> optionalDocument = repository.findOne(uuid);
-        return optionalDocument.map(TransactionConverterApply::apply);
+        return repository.findOne(uuid);
     }
 
 
