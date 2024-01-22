@@ -11,8 +11,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class TransactionPanacheRepository
@@ -50,6 +52,12 @@ public class TransactionPanacheRepository
 
     public Optional<Transaction> findOne(String uuid) {
         return find(TransactionConverterApply.ID, uuid).stream().findFirst();
+    }
+
+    public List<Transaction> buscarTransacoes(final Date dataInicio, final Date dataFim){
+       return find("data >= ?1 and data <= ?2 and status", dataInicio, dataFim, StatusPix.APPROVED).stream().collect(
+               Collectors.toList());
+
     }
 
 }

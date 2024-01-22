@@ -10,6 +10,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -21,6 +23,10 @@ public class TransactionDomain {
 
     public void adicionarTransacao(final LinhaDigitavel linhaDigitavel, final BigDecimal valor, final Chave chave) {
         repository.adicionar(linhaDigitavel, valor, chave);
+    }
+
+    public List<Transaction> buscarTransacoes(final Date dataInicio, Date dataFim){
+        return repository.buscarTransacoes(dataInicio, dataFim);
     }
 
     public Optional<Transaction> aprovarTransacao(final String uuid) {

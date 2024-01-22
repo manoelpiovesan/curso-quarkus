@@ -1,13 +1,22 @@
 package com.github.manoelpiovesan.api;
 
 import com.github.manoelpiovesan.entity.Pix;
+import com.github.manoelpiovesan.entity.Transaction;
 import com.github.manoelpiovesan.service.DictService;
 import com.github.manoelpiovesan.service.PixService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.ParameterIn;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponseSchema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 @Path("/v1/pix")
@@ -19,23 +28,28 @@ public class PixResource {
     @Inject
     PixService pixService;
 
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
     @POST
+    @Path("/linha")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/linha")
     public Response gerarLinhaDigitavel(final Pix pix) {
         var chave = dictService.buscarChave(pix.chave());
 
         if (Objects.nonNull(chave)) {
-            return Response.ok(pixService.gerarLinhaDigitavel(chave, pix.valor(), pix.cidadeRemetente())).build()   ;
+            return Response.ok(
+                                   pixService.gerarLinhaDigitavel(chave, pix.valor(),
+                                                                  pix.cidadeRemetente()))
+                           .build();
         }
 
         return null;
     }
 
     @GET
-    @Produces("image/png")
     @Path("/{uuid}/qrcode")
+    @Produces("image/png")
     public Response gerarQrCode(@PathParam("uuid") final String uuid) {
         try {
             System.out.println(uuid);
@@ -46,19 +60,19 @@ public class PixResource {
         }
     }
 
+    @PATCH
+    @Path("/{uuid}/aprovar")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{uuid}/aprovar")
-    @PATCH
     public Response aprovarPix(@PathParam("uuid") String uuid) {
 
         return Response.ok(pixService.aprovarTransacao(uuid).get()).build();
     }
 
+    @DELETE
+    @Path("/{uuid}/reprovar")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{uuid}/reprovar")
-    @DELETE
     public Response reprovarPix(@PathParam("uuid") String uuid) {
 
         return Response.ok(pixService.reprovarTransacao(uuid).get()).build();
@@ -66,18 +80,41 @@ public class PixResource {
 
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{uuid}")
+    @Path("/transacoes")
     @GET
+    @Operation(description = "API responsável por buscar pagamentos PIX")
+    @APIResponseSchema(Transaction.class)
+    @APIResponses(value = {
+            @APIResponse(responseCode = "200", description = "OK"),
+            @APIResponse(responseCode = "201", description = "Retorno OK com a transação criada."),
+            @APIResponse(responseCode = "401", description = "Erro de autenticação dessa API"),
+            @APIResponse(responseCode = "403", description = "Erro de autorização dessa API"),
+            @APIResponse(responseCode = "404", description = "Recurso não encontrado")
+    })
+    @Parameter(
+            name = "dataInicio",
+            in = ParameterIn.QUERY,
+            description = "Data de Inicio no formato yyyy-MM-dd"
+    )
+    @Parameter(
+            name = "dataFim",
+            in = ParameterIn.QUERY,
+            description = "Data de Fim no formato yyyy-MM-dd"
+    )
+    public Response buscarTransacoes(@QueryParam(value = "dataInicio") String dataInicio, @QueryParam(value = "dataFim") String dataFim) throws ParseException {
+        return Response.ok(pixService.buscarTransacoes(DATE_FORMAT.parse(dataInicio),
+                                                       DATE_FORMAT.parse(dataFim))).build();
+    }
+
+
+    @GET
+    @Path("/{uuid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
 
     public Response buscarPix(@PathParam("uuid") String uuid) {
 
         return Response.ok(pixService.findById(uuid)).build();
     }
-
-
-
-
-
-
 
 }
