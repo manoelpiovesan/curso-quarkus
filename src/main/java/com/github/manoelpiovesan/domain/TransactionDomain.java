@@ -8,9 +8,6 @@ import com.github.manoelpiovesan.repository.TransacaoPixMongoClientRepository;
 import com.github.manoelpiovesan.repository.TransactionPanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.TransactionScoped;
-import jakarta.transaction.Transactional;
-import org.bson.Document;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -21,7 +18,7 @@ public class TransactionDomain {
     TransactionPanacheRepository repository;
 
 
-    @Transactional
+
     public void adicionarTransacao(final LinhaDigitavel linhaDigitavel, final BigDecimal valor, final Chave chave) {
         repository.adicionar(linhaDigitavel, valor, chave);
     }
