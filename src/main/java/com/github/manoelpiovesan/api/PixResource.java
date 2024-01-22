@@ -33,7 +33,6 @@ public class PixResource {
         return null;
     }
 
-
     @GET
     @Produces("image/png")
     @Path("/qrcode/{uuid}")
