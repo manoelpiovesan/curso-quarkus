@@ -17,6 +17,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 @Path("/v1/pix")
@@ -78,7 +79,6 @@ public class PixResource {
         return Response.ok(pixService.reprovarTransacao(uuid).get()).build();
     }
 
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/transacoes")
     @GET
@@ -102,8 +102,12 @@ public class PixResource {
             description = "Data de Fim no formato yyyy-MM-dd"
     )
     public Response buscarTransacoes(@QueryParam(value = "dataInicio") String dataInicio, @QueryParam(value = "dataFim") String dataFim) throws ParseException {
-        return Response.ok(pixService.buscarTransacoes(DATE_FORMAT.parse(dataInicio),
-                                                       DATE_FORMAT.parse(dataFim))).build();
+        SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date dataInicioFormatada = formatoData.parse(dataInicio);
+        Date dataFimFormatada = formatoData.parse(dataFim);
+
+        return Response.ok(pixService.buscarTransacoes(dataInicioFormatada,dataFimFormatada)).build();
     }
 
 

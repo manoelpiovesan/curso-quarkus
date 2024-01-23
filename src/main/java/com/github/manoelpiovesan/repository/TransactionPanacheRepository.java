@@ -33,7 +33,6 @@ public class TransactionPanacheRepository
 
         transaction.persist();
 
-
     }
 
     public Optional<Transaction> alterarStatusTransacao(String uuid,
@@ -54,9 +53,11 @@ public class TransactionPanacheRepository
         return find(TransactionConverterApply.ID, uuid).stream().findFirst();
     }
 
-    public List<Transaction> buscarTransacoes(final Date dataInicio, final Date dataFim){
-       return find("data >= ?1 and data <= ?2 and status", dataInicio, dataFim, StatusPix.APPROVED).stream().collect(
-               Collectors.toList());
+    public List<Transaction> buscarTransacoes(final Date dataInicio,
+                                              final Date dataFim) {
+        return find("data >= ?1 and data <= ?2", dataInicio, dataFim).stream()
+                                                                     .collect(
+                                                                             Collectors.toList());
 
     }
 
